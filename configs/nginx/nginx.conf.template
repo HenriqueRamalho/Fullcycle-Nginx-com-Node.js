@@ -1,0 +1,23 @@
+worker_processes 1;
+ 
+events { 
+    worker_connections 1024;
+}
+ 
+http {
+
+    upstream myapp1 {
+        server ${ADDRESS_WEB_APP_EXAMPLE_A};
+    } 
+  
+    server {
+        listen 80;
+        server_name localhost;
+        location / {
+            proxy_set_header   X-Forwarded-Host ${DOLLAR}host;
+            proxy_set_header   Host ${DOLLAR}host;
+            proxy_pass http://myapp1;
+        }
+    } 
+
+}

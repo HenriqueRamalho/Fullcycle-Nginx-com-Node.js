@@ -1,0 +1,38 @@
+version: "3"
+
+services: 
+  gateway:  
+    container_name: gateway-nginx
+    image: nginx:latest
+    ports:
+      - 8080:80
+    volumes: 
+      - ./:/src
+    networks: 
+      - full-cycle  
+    depends_on: 
+      - web-app-example-a 
+    environment: 
+      - ADDRESS_WEB_APP_EXAMPLE_A=web-app-example-a:3000  
+    command: ./src/scripts/run_nginx.sh       
+  web-app-example-a: 
+    image: ramalho2/full_cycle_simple-web-node
+    container_name: web-app-example-a
+    networks: 
+      - full-cycle  
+    environment: 
+      - DATABASE_HOST=db  
+    depends_on: 
+      - db  
+  db:
+    image: mysql
+    container_name: db
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456      
+    networks: 
+      - full-cycle        
+
+networks: 
+  full-cycle:
+    driver: bridge
