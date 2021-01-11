@@ -10,19 +10,20 @@ services:
       - ./:/src
     networks: 
       - full-cycle  
-    depends_on: 
+    links: 
       - web-app-example-a 
     environment: 
       - ADDRESS_WEB_APP_EXAMPLE_A=web-app-example-a:3000  
     command: ./src/scripts/run_nginx.sh       
   web-app-example-a: 
-    image: ramalho2/full_cycle_simple-web-node
+    build: ./simple_web_service_node
+    image: web-app-example-a
     container_name: web-app-example-a
     networks: 
       - full-cycle  
     environment: 
       - DATABASE_HOST=db  
-    depends_on: 
+    links: 
       - db  
   db:
     image: mysql
@@ -31,8 +32,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 123456      
     networks: 
-      - full-cycle        
-
+      - full-cycle 
 networks: 
   full-cycle:
     driver: bridge
